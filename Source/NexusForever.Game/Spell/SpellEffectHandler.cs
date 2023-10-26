@@ -5,6 +5,7 @@ using NexusForever.Game.Entity;
 using NexusForever.Game.Map;
 using NexusForever.Game.Static.Entity;
 using NexusForever.Game.Static.Spell;
+using NexusForever.Game.Static.Spell.Proc;
 using NexusForever.GameTable;
 using NexusForever.GameTable.Model;
 using NexusForever.Network.World.Message.Model;
@@ -235,6 +236,18 @@ namespace NexusForever.Game.Spell
         [SpellEffectHandler(SpellEffectType.Fluff)]
         public static void HandleEffectFluff(ISpell spell, IUnitEntity target, ISpellTargetEffectInfo info)
         {
+        }
+        
+        [SpellEffectHandler(SpellEffectType.Proc)]
+        public static void HandleEffectProc(ISpell spell, IUnitEntity target, ISpellTargetEffectInfo info)
+        {
+            var proc = new Proc((ProcType)info.Entry.DataBits00,
+                info.Entry.DataBits01,
+                info.Entry.DataBits04);
+
+            // target.AddProc(proc);
+            target.AddProc(info.Entry.SpellId, proc);
+            // TODO: Add the proc to the unit so it'll register reacting to things!
         }
 
         [SpellEffectHandler(SpellEffectType.UnitPropertyModifier)]

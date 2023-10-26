@@ -2,6 +2,7 @@
 using NexusForever.Game.Abstract.Spell;
 using NexusForever.Game.Static.Entity;
 using NexusForever.Game.Static.Spell;
+using NexusForever.Game.Static.Spell.Proc;
 
 namespace NexusForever.Game.Abstract.Entity
 {
@@ -123,5 +124,14 @@ namespace NexusForever.Game.Abstract.Entity
         /// Invoked when an existing <see cref="IHostileEntity"/> is update on the threat list.
         /// </summary>
         void OnThreatChange(IHostileEntity hostile);
+
+        void AddProc(uint spellId, IProc proc);
+        void RemoveProcs(uint spellId);
+        
+        /// <summary>
+        /// Called when an action triggers a proc of ProcType. Target is the "trigger" of the proc.
+        /// In case of a kill, it would be the unit we killed.
+        /// </summary>
+        void Proc(ProcType procType, IUnitEntity target);
     }
 }

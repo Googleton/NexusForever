@@ -224,7 +224,9 @@ namespace NexusForever.Game.Entity
             //     throw new InvalidOperationException();
 
             spells.Remove(spell4BaseId);
+            // FIXME: Tiers are bad!
             player.RemoveSpellProperties(spellBaseInfo.GetSpellInfo(0).Entry.Id);
+            player.RemoveProcs(spellBaseInfo.GetSpellInfo(0).Entry.Id);
         }
 
         /// <summary>

@@ -8,6 +8,7 @@ using NexusForever.Game.Static.Entity;
 using NexusForever.Game.Static.Quest;
 using NexusForever.Game.Static.Reputation;
 using NexusForever.Game.Static.Spell;
+using NexusForever.Game.Static.Spell.Proc;
 using NexusForever.GameTable;
 using NexusForever.GameTable.Model;
 using NexusForever.Network.World.Message.Model;
@@ -86,6 +87,8 @@ namespace NexusForever.Game.Entity
         private readonly List<ISpell> pendingSpells = new();
 
         private Dictionary<Property, Dictionary</*spell4Id*/uint, ISpellPropertyModifier>> spellProperties = new();
+
+        private Dictionary<ProcType, Dictionary</*spell4Id*/uint, List<IProc>>> procs = new();
 
         protected UnitEntity(EntityType type)
             : base(type)
@@ -498,6 +501,32 @@ namespace NexusForever.Game.Entity
         public virtual void OnThreatChange(IHostileEntity hostile)
         {
             scriptCollection?.Invoke<IUnitScript>(s => s.OnThreatChange(hostile));
+        }
+
+        public void AddProc(uint spellId, IProc proc)
+        {
+            if (!procs.ContainsKey(proc.ProcType))
+                procs.Add(proc.ProcType, new Dictionary<uint, List<IProc>>());
+            
+            if (!procs[proc.ProcType].ContainsKey(spellId))
+                procs[proc.ProcType].Add(spellId, new List<IProc>());
+            procs[proc.ProcType][spellId].Add(proc);
+        }
+
+        public void RemoveProcs(uint spellId)
+        {
+            // TODO: Loop over every type to find spellIds
+        }
+        
+        public void Proc(ProcType procType, IUnitEntity target)
+        {
+            foreach ((uint spellId, List<IProc> procs) in procs[procType])
+            {
+                foreach (IProc proc in procs)
+                {
+                    proc.TriggerProc(this, target);
+                }
+            }
         }
 
         private void UpdateCombatState()
